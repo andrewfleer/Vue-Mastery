@@ -42,10 +42,21 @@
                     </p>
 
                     <div v-for="variant in variants" :key="variant.variantId"> <!-- How to render a list of object. Always a good idea to use the key binding. -->
-                        <p>{{ variant.variantColor }}</p>
+                        <p v-on:mouseover="updateProduct(variant.variantImage)">{{ variant.variantColor }}</p>
                     </div>
 
-                    <a v-bind:href="link">Link to Vue Mastery!</a>
+                    <div>
+                        <a v-bind:href="link">Link to Vue Mastery!</a>
+                    </div>
+
+                    <div>
+                        <button v-on:click="addToCart">Add to Cart</button> <!-- This is a cool way for Vue to read from the DOM-->
+                        <button @click="removeFromCart">Remove from Cart</button> <!-- the @ is shorthand for v-on -->
+
+                        <div class="cart">
+                            <p>Cart({{cart}})</p>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
