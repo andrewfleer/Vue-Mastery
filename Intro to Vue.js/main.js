@@ -5,9 +5,9 @@ var app = new Vue({
         description: 'A pair of warm, fuzzy socks',
         image: './assets/vmSocks-green.jpg', // The data can also fill in a v-bind tag
         link: 'http://www.vuemastery.com',
-        inStock: true, // You can use booleans for v-if / v-else conditional rendering.
+        inStock: false, // You can use booleans for v-if / v-else conditional rendering.
         onSale: true,
-        inventory: 100, // Or you can use v-if for more conditional logic.
+        inventory: 0, // Or you can use v-if for more conditional logic.
         details: ["80% cotton", "20% polyester", "Gender-neutral"],
         sizes: ["Small", "Medium", "Large"],
         variants: [

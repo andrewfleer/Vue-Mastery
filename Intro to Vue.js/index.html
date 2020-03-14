@@ -21,7 +21,8 @@
                     <h1>{{ product }}</h1>
                     <p v-if="inventory > 10">In Stock</p>  <!-- Conditional Rendering -->
                     <p v-else-if="inventory<= 10 && inventory > 0">Almost sold out!</p>
-                    <p v-else>Out of Stock</p>
+                    <p v-else
+                       :class="{ lineThrough : !inStock}">Out of Stock</p>
                     <p v-if="onSale">On Sale!</p>
                     <p v-show="inStock">Buy Today!</p> <!-- v-show also conditionally shows thing. v-if adds and removes elements from the DOM.-->
                                                        <!-- v-show just hides/unhides through CSS. Better for performance.-->
@@ -41,8 +42,14 @@
                         </ul>
                     </p>
 
-                    <div v-for="variant in variants" :key="variant.variantId"> <!-- How to render a list of object. Always a good idea to use the key binding. -->
-                        <p v-on:mouseover="updateProduct(variant.variantImage)">{{ variant.variantColor }}</p>
+                    <!-- The style binding let's us change CSS styles dynamically. 
+                         Here we're changing the background color of the div, based on the variant configs-->
+                    <div v-for="variant in variants" 
+                         :key="variant.variantId"
+                         class="color-box" 
+                         :style="{ backgroundColor: variant.variantColor }"
+                         @mouseover="updateProduct(variant.variantImage)"> <!-- How to render a list of object. Always a good idea to use the key binding. -->
+                        
                     </div>
 
                     <div>
@@ -50,7 +57,11 @@
                     </div>
 
                     <div>
-                        <button v-on:click="addToCart">Add to Cart</button> <!-- This is a cool way for Vue to read from the DOM-->
+
+                        <!-- Here we did class binding. This is a way to dynamically add a CSS class to an element.-->
+                        <button v-on:click="addToCart" 
+                                :disabled="!inStock"
+                                :class="{ disabledButton: !inStock }">Add to Cart</button> <!-- This is a cool way for Vue to read from the DOM-->
                         <button @click="removeFromCart">Remove from Cart</button> <!-- the @ is shorthand for v-on -->
 
                         <div class="cart">
