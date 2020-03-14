@@ -7,6 +7,18 @@ var app = new Vue({
         link: 'http://www.vuemastery.com',
         inStock: true, // You can use booleans for v-if / v-else conditional rendering.
         onSale: true,
-        inventory: 100 // Or you can use v-if for more conditional logic.
+        inventory: 100, // Or you can use v-if for more conditional logic.
+        details: ["80% cotton", "20% polyester", "Gender-neutral"],
+        sizes: ["Small", "Medium", "Large"],
+        variants: [
+            {
+                variantId: 2234,
+                variantColor: "green"
+            },
+            {
+                variantId: 2235,
+                variantColor: "blue"
+            }
+        ]
     }
 })

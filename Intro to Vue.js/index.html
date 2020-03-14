@@ -26,6 +26,25 @@
                     <p v-show="inStock">Buy Today!</p> <!-- v-show also conditionally shows thing. v-if adds and removes elements from the DOM.-->
                                                        <!-- v-show just hides/unhides through CSS. Better for performance.-->
                     <p>{{ description }}</p>
+
+                    <p>
+                        <strong>Colors</strong>
+                        <ul>
+                            <li v-for="detail in details">{{ detail }}</li> <!-- This loops through an array in the js file and builds an unorder list. Neat!-->
+                        </ul>
+                    </p>
+
+                    <p>
+                        <strong>Sizes</strong>
+                        <ul>
+                            <li v-for="size in sizes">{{ size }}</li>
+                        </ul>
+                    </p>
+
+                    <div v-for="variant in variants" :key="variant.variantId"> <!-- How to render a list of object. Always a good idea to use the key binding. -->
+                        <p>{{ variant.variantColor }}</p>
+                    </div>
+
                     <a v-bind:href="link">Link to Vue Mastery!</a>
                 </div>
             </div>
