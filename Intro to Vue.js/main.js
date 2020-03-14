@@ -59,7 +59,20 @@ Vue.component('product',{
                         :class="{ disabledButton: !inStock }">Add to Cart</button> <!-- This is a cool way for Vue to read from the DOM-->
                 <button @click="removeFromCart">Remove from Cart</button> <!-- the @ is shorthand for v-on -->
 
+                <div>
+                    <h2>Reviews</h2>
+                    <p v-if="!reviews.length">There are no reviews yet.</p>
+                    <ul>
+                        <li v-for="review in reviews">
+                            <p>{{ review.name }}</p>
+                            <p>{{ review.rating}}</p>
+                            <p>{{ review.review }}</p>
+                            <p>Would you recommend: {{ review.recommend }}</p>
+                        </li>
+                    </ul>
+                </div>
 
+                <product-review @review-submitted="addReview"></product-review>
             </div>
         </div>
     </div>
@@ -88,7 +101,8 @@ Vue.component('product',{
                     variantImage: './assets/vmSocks-blue.jpg',
                     variantQuantity: 0
                 }
-            ]
+            ],
+            reviews: []
         }
     },
     methods: {  // These are functions that can be loaded through Vue
@@ -101,6 +115,9 @@ Vue.component('product',{
         updateProduct(index) { // You can use a shorthand instead of declaring anonymous functions. However, not all browsers support this.
             this.selectedVariant = index // "this" references the cart within this element.
             console.log(index)
+        },
+        addReview(productReview) {
+            this.reviews.push(productReview)
         }
     },
     computed: {  // These are computed properties.
@@ -146,6 +163,87 @@ Vue.component('product-details', {
       </ul>
     `
   })
+
+Vue.component('product-review', {
+    // The v-model in here lets you do two-way data binding. From the data to the DOM and the DOM to the data.
+    template: `
+        <form class="review-form" @submit.prevent="onSubmit">
+
+        <p v-if="errors.length">
+            <b>Please correct the following error(s):</b>
+            <ul>
+                <li v-for="error in errors">{{ error }}</li>
+            </ul>
+        </p>
+
+        <p>
+        <label for="name">Name:</label>
+        <input id="name" v-model="name" placeholder="name">
+        </p>
+        
+        <p>
+        <label for="review">Review:</label>      
+        <textarea id="review" v-model="review"></textarea>
+        </p>
+        
+        <p>
+        <label for="rating">Rating:</label>
+        <select id="rating" v-model.number="rating">
+            <option>5</option>
+            <option>4</option>
+            <option>3</option>
+            <option>2</option>
+            <option>1</option>
+        </select>
+        </p>
+
+        <p>
+            <label for="recommend">Would you recoomend this product?</label>
+            <fieldset id="recommend">
+                <label>Yes <input type="radio" id="yes" value="yes" name="recommendation" v-model="recommend"></label>
+                <label>No <input type="radio" id="no" value="no" name="recommendation" v-model="recommend"></label>
+            </fieldset>
+        </p>
+            
+        <p>
+        <input type="submit" value="Submit">  
+        </p>    
+    
+    </form>
+    `,
+    data() {
+        return {
+            name: null,
+            review: null,
+            rating: null,
+            recommend: null,
+            errors: []
+        }
+    },
+    methods: {
+        onSubmit() {
+            this.errors = []
+            if (this.name && this.review && this.rating) {
+                let productReview = {
+                    name: this.name,
+                    review: this.review,
+                    rating: this.rating,
+                    recommend: this.recommend
+                }
+                this.$emit('review-submitted', productReview)
+                this.name = null
+                this.review = null
+                this.rating = null
+                this.recommend = null
+            } else {
+                if (!this.name) this.errors.push("Name required.")
+                if (!this.review) this.errors.push("Review required.")
+                if (!this.rating) this.errors.push("Rating required.")
+                if (!this.recommend) this.errors.push("Recommendation required.")
+            }
+        }
+    }
+})
 
 var app = new Vue({
     el: '#app',  // This tells the JS to go to an element with the ID "#app".
