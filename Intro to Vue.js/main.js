@@ -1,3 +1,7 @@
+var eventBus = new Vue({
+
+})
+
 Vue.component('product',{
     props: {
         premium: {
@@ -19,15 +23,14 @@ Vue.component('product',{
             <p v-else-if="inventory<= 10 && inventory > 0">Almost sold out!</p>
             <p v-else
             :class="{ lineThrough : !inStock}">Out of Stock</p>
-            <p>Shipping: {{ shipping }}</p>
             <p >{{ sale }}</p>
             <p v-show="inStock">Buy Today!</p> <!-- v-show also conditionally shows thing. v-if adds and removes elements from the DOM.-->
                                             <!-- v-show just hides/unhides through CSS. Better for performance.-->
             <p>{{ description }}</p> <!-- This is a plain, boring, regular property-->
 
-            <p>
-            <product-details :details="details"></product-details>                   
-            </p>
+
+
+            <details-tabs :shipping="shipping" :details="details"></details-tabs>
 
             <p>
                 <strong>Sizes</strong>
@@ -59,20 +62,8 @@ Vue.component('product',{
                         :class="{ disabledButton: !inStock }">Add to Cart</button> <!-- This is a cool way for Vue to read from the DOM-->
                 <button @click="removeFromCart">Remove from Cart</button> <!-- the @ is shorthand for v-on -->
 
-                <div>
-                    <h2>Reviews</h2>
-                    <p v-if="!reviews.length">There are no reviews yet.</p>
-                    <ul>
-                        <li v-for="review in reviews">
-                            <p>{{ review.name }}</p>
-                            <p>{{ review.rating}}</p>
-                            <p>{{ review.review }}</p>
-                            <p>Would you recommend: {{ review.recommend }}</p>
-                        </li>
-                    </ul>
-                </div>
+                <review-tabs :reviews="reviews"></review-tabs>
 
-                <product-review @review-submitted="addReview"></product-review>
             </div>
         </div>
     </div>
@@ -115,9 +106,6 @@ Vue.component('product',{
         updateProduct(index) { // You can use a shorthand instead of declaring anonymous functions. However, not all browsers support this.
             this.selectedVariant = index // "this" references the cart within this element.
             console.log(index)
-        },
-        addReview(productReview) {
-            this.reviews.push(productReview)
         }
     },
     computed: {  // These are computed properties.
@@ -147,15 +135,20 @@ Vue.component('product',{
             }
             return 2.99
         }
+    },
+    mounted() {
+        eventBus.$on('review-submitted', productReview => {
+            this.reviews.push(productReview)
+        })
     }
 })
 
 Vue.component('product-details', {
     props: {
-      details: {
-        type: Array,
-        required: true
-      }
+        details: {
+            type: Array,
+            required: true
+        }
     },
     template: `
       <ul>
@@ -198,7 +191,7 @@ Vue.component('product-review', {
         </p>
 
         <p>
-            <label for="recommend">Would you recoomend this product?</label>
+            <label for="recommend">Would you recommend this product?</label>
             <fieldset id="recommend">
                 <label>Yes <input type="radio" id="yes" value="yes" name="recommendation" v-model="recommend"></label>
                 <label>No <input type="radio" id="no" value="no" name="recommendation" v-model="recommend"></label>
@@ -230,7 +223,7 @@ Vue.component('product-review', {
                     rating: this.rating,
                     recommend: this.recommend
                 }
-                this.$emit('review-submitted', productReview)
+                eventBus.$emit('review-submitted', productReview)
                 this.name = null
                 this.review = null
                 this.rating = null
@@ -241,6 +234,82 @@ Vue.component('product-review', {
                 if (!this.rating) this.errors.push("Rating required.")
                 if (!this.recommend) this.errors.push("Recommendation required.")
             }
+        }
+    }
+})
+
+Vue.component('review-tabs', {
+    props: {
+        reviews: {
+            type: Array,
+            required: true
+        }
+    },
+    template: `
+        <div>
+            <span class="tab"
+                  :class="{ activeTab: selectedTab === tab}"
+                  v-for="(tab, index) in tabs" 
+                  :key="index"
+                  @click="selectedTab = tab">
+                {{ tab }} </span>
+
+            <div v-show="selectedTab === 'Reviews'">
+                <h2>Reviews</h2>
+                <p v-if="!reviews.length">There are no reviews yet.</p>
+                <ul>
+                    <li v-for="review in reviews">
+                        <p>{{ review.name }}</p>
+                        <p>{{ review.rating}}</p>
+                        <p>{{ review.review }}</p>
+                        <p>Would you recommend: {{ review.recommend }}</p>
+                    </li>
+                </ul>
+            </div>
+
+            <product-review v-show="selectedTab === 'Make a Review'"></product-review>
+        </div>
+    `,
+    data() {
+        return {
+            tabs: ['Reviews', 'Make a Review'],
+            selectedTab: 'Reviews'
+        }
+    }
+})
+
+Vue.component('details-tabs', {
+    props: {
+        shipping: {
+            required: true
+        },
+        details: {
+            type: Array,
+            required: true
+        }
+    },
+    template: `
+        <div>
+            <span class="tab"
+                :class="{ activeTab: selectedTab === tab}"
+                v-for="(tab, index) in tabs"
+                :key="index"
+                @click="selectedTab = tab">
+                {{ tab }} </span>
+
+            <div v-show="selectedTab === 'Details'">
+                <product-details :details="details"></product-details>                   
+            </div>
+
+            <div v-show="selectedTab === 'Shipping'">
+                <p>Shipping: {{ shipping }}</p>
+            </div>
+        </div>
+    `,
+    data() {
+        return {
+            tabs: ['Details', 'Shipping'],
+            selectedTab: 'Details'
         }
     }
 })
