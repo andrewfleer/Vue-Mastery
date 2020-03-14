@@ -19,6 +19,12 @@
 
                 <div class="product-info">
                     <h1>{{ product }}</h1>
+                    <p v-if="inventory > 10">In Stock</p>  <!-- Conditional Rendering -->
+                    <p v-else-if="inventory<= 10 && inventory > 0">Almost sold out!</p>
+                    <p v-else>Out of Stock</p>
+                    <p v-if="onSale">On Sale!</p>
+                    <p v-show="inStock">Buy Today!</p> <!-- v-show also conditionally shows thing. v-if adds and removes elements from the DOM.-->
+                                                       <!-- v-show just hides/unhides through CSS. Better for performance.-->
                     <p>{{ description }}</p>
                     <a v-bind:href="link">Link to Vue Mastery!</a>
                 </div>
