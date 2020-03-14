@@ -59,49 +59,47 @@ Vue.component('product',{
                         :class="{ disabledButton: !inStock }">Add to Cart</button> <!-- This is a cool way for Vue to read from the DOM-->
                 <button @click="removeFromCart">Remove from Cart</button> <!-- the @ is shorthand for v-on -->
 
-                <div class="cart">
-                    <p>Cart({{cart}})</p>
-                </div>
+
             </div>
         </div>
     </div>
     `,
     data() {
-        return { brand: 'Vue Mastery',
-        product: 'Socks',  // The data for this element, to fill in anything with {{ }}
-        description: 'A pair of warm, fuzzy socks',
-        selectedVariant: 0,
-        link: 'http://www.vuemastery.com',
-        
-        onSale: true,
-        details: ["80% cotton", "20% polyester", "Gender-neutral"],
-        sizes: ["Small", "Medium", "Large"],
-        variants: [
-            {
-                variantId: 2234,
-                variantColor: "green",
-                variantImage: './assets/vmSocks-green.jpg',
-                variantQuantity: 10
-            },
-            {
-                variantId: 2235,
-                variantColor: "blue",
-                variantImage: './assets/vmSocks-blue.jpg',
-                variantQuantity: 0
-            }
-        ],
-        cart: 0
-    }
+        return { 
+            brand: 'Vue Mastery',
+            product: 'Socks',  // The data for this element, to fill in anything with {{ }}
+            description: 'A pair of warm, fuzzy socks',
+            selectedVariant: 0,
+            link: 'http://www.vuemastery.com',
+            
+            onSale: true,
+            details: ["80% cotton", "20% polyester", "Gender-neutral"],
+            sizes: ["Small", "Medium", "Large"],
+            variants: [
+                {
+                    variantId: 2234,
+                    variantColor: "green",
+                    variantImage: './assets/vmSocks-green.jpg',
+                    variantQuantity: 10
+                },
+                {
+                    variantId: 2235,
+                    variantColor: "blue",
+                    variantImage: './assets/vmSocks-blue.jpg',
+                    variantQuantity: 0
+                }
+            ]
+        }
     },
     methods: {  // These are functions that can be loaded through Vue
         addToCart: function () {
-            this.cart += 1  // "this" references the cart within this element.
+            this.$emit('add-to-cart', this.variants[this.selectedVariant].variantId)
         },
-        removeFromCart() {
-            this.cart -= 1
-        },
+         removeFromCart() {
+             this.$emit('remove-from-cart')
+         },
         updateProduct(index) { // You can use a shorthand instead of declaring anonymous functions. However, not all browsers support this.
-            this.selectedVariant = index
+            this.selectedVariant = index // "this" references the cart within this element.
             console.log(index)
         }
     },
@@ -152,6 +150,15 @@ Vue.component('product-details', {
 var app = new Vue({
     el: '#app',  // This tells the JS to go to an element with the ID "#app".
     data: {
-        premium: true
-    }   
+        premium: true,
+        cart: []
+    },
+    methods: {
+        addToCart(id) {
+            this.cart.push(id)
+        },
+        removeFromCart(id) {
+            this.cart.pop(id)
+        }
+    }
 })
