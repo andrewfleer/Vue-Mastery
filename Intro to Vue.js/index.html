@@ -3,12 +3,26 @@
     <head>
         <meta name="viewport" content="width=device-width"/>
         <title>Product App</title>
+        <link rel="stylesheet" type="text/css" href="product_style.css">
     </head>
     <body>
+
+        <div class="nav-bar"></div>
+
         <div id="app">
-            <!-- The {{ }} are expressions. They pull settings from the javascript.-->
-            <h1>{{ product }}</h1>
-            <p>{{ description }}</p>
+            <div class="product">
+                <!-- The {{ }} are expressions. They pull settings from the javascript.-->
+                <div class="product-image">
+                    <img v-bind:src="image" v-bind:alt="description" />  <!-- v-bind: dynamically binds an attribute to an expression -->
+                                                                         <!-- a shorthand method is to just use the colon. <img :src="image"> -->
+                </div>
+
+                <div class="product-info">
+                    <h1>{{ product }}</h1>
+                    <p>{{ description }}</p>
+                    <a v-bind:href="link">Link to Vue Mastery!</a>
+                </div>
+            </div>
         </div>
 
         <script src="https://cdn.jsdelivr.net/npm/vue"></script>
